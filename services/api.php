@@ -37,6 +37,32 @@
       else
         $this->response('',404);
     }
+    
+    
+    /*
+     *  
+     */ 
+    private function posts(){
+      if($this->get_request_method() != "GET"){
+        $this->response('',406);
+      }
+      $query="SELECT title, img_filename, full_name
+              FROM posts 
+              JOIN users
+              ON posts.user_id = users.id order by posts.id desc";
+
+      $r = $this->mysqli->query($query) or die($this->mysqli->error.__LINE__);
+
+      if($r->num_rows > 0){
+        $result = array();
+        while($row = $r->fetch_assoc()){
+          $result[] = $row;
+        }
+        $this->response($this->json($result), 200); // OK 
+      }
+      $this->response('',204);  // no content 
+    }
+
 
     // returns json 
     private function json($data){
