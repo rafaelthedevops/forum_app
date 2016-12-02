@@ -1,7 +1,7 @@
 <?php
   require_once("Rest.class.php");
   
-  class ForumApi extends REST {
+  class API extends REST {
   
     public $data = "";
     
@@ -72,7 +72,7 @@
       }
       $id = (int)$this->_request['id'];
       if($id > 0){  
-        $query="SELECT img_title, img_filename, full_name
+        $query="SELECT title, img_filename, full_name
                 FROM posts 
                 JOIN users
                 ON posts.user_id = users.id  where posts.id=$id";
