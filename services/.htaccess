@@ -2,12 +2,13 @@
 	RewriteEngine On
 	
 	RewriteCond %{REQUEST_FILENAME} !-d
-    	RewriteCond %{REQUEST_FILENAME} !-s
+	RewriteCond %{REQUEST_FILENAME} !-s
 	RewriteRule ^(.*)$ api.php?x=$1 [QSA,NC,L]
 
 	RewriteCond %{REQUEST_FILENAME} -d
 	RewriteRule ^(.*)$ api.php [QSA,NC,L]
 
 	RewriteCond %{REQUEST_FILENAME} -s
-	RewriteRule ^(.*)$ api.php [QSA,NC,L]	
+	RewriteRule ^(.*)$ api.php [QSA,NC,L]
+        RewriteRule ^post\/([0-9]+)$ api.php?id=$1 [QSA,L,NC]	
 </IfModule>
