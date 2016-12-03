@@ -1,6 +1,6 @@
 <?php
   require_once("Rest.class.php");
-  
+  require "../vendor/autoload.php";
   class API extends REST {
   
     public $data = "";
@@ -89,27 +89,55 @@
     /* 
      * Insert a Post
      */ 
+    
+    
+
 
     private function insertPost(){
       if($this->get_request_method() != "POST"){
         $this->response('',406);
       }
+      
+      define("ACCESS_KEY", "");
+      define("SECRET_KEY", "");
 
+      use Aws\S3\S3Client;
+
+      try {
+        if(!isset($_FILES['img_filename'])) {
+          throw new Exception("File not uploaded", 1);
+        }
+        $my_s3client = S3Client::factory(array(
+          'key'    => ACCESS_KEY,
+          'secret' => SECRET_KEY
+          ));
+       $response = $my_s3client->putObject(array(
+        'Bucket' => "rafael-posts",
+        'Key'    => $_FILES['img_filename']['name'],
+        'SoourceFile' => $_FILES['img_filename']['tmp_name']
+        ));
+       $uploaded_url = {$response['ObjectURL']};
+      }
+      
       $post = json_decode(file_get_contents("php://input"),true);
       $column_names = array('user_id', 'title', 'img_filename');
       $keys = array_keys($post);
       $columns = '';
       $values = '';
+
       foreach($column_names as $desired_key){ // Check the post received. If blank insert blank into the array.
          if(!in_array($desired_key, $keys)) {
             $$desired_key = '';
         }else{
           $$desired_key = $post[$desired_key];
         }
+
         $columns = $columns.$desired_key.',';
         $values = $values."'".$$desired_key."',";
       }
-      $query = "INSERT INTO posts(".trim($columns,',').") VALUES(".trim($values,',').")";
+      //$query = "INSERT INTO posts(".trim($columns,',').") VALUES(".trim($values,',').")";
+      $query = "INSERT INTO posts(".trim($columns,',').") VALUES('$post[0]','$post[1]',$post[2])";
+      
       if(!empty($post)){
         $r = $this->mysqli->query($query) or die($this->mysqli->error.__LINE__);
         $success = array('status' => "Success", "msg" => "Post Created Successfully.", "data" => $post);
