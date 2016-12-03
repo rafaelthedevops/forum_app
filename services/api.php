@@ -6,8 +6,8 @@
     public $data = "";
     
     const DB_SERVER = "localhost";
-    const DB_USER = "root";
-    const DB_PASSWORD = "zaq12wsx";
+    const DB_USER = "forum";
+    const DB_PASSWORD = "";
     const DB = "forum";
 
     private $db = NULL;
@@ -90,9 +90,6 @@
      * Insert a Post
      */ 
     
-    
-
-
     private function insertPost(){
       if($this->get_request_method() != "POST"){
         $this->response('',406);
